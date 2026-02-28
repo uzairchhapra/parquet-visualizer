@@ -32,6 +32,12 @@ updates:
           - "eslint-plugin-*"
           - "prettier"
           - "globals"
+    # Pin eslint to v9.x until eslint-plugin-react-hooks supports v10+
+    ignore:
+      - dependency-name: "eslint"
+        versions: [">=10"]
+      - dependency-name: "@eslint/js"
+        versions: [">=10"]
     labels:
       - "dependencies"
     commit-message:
