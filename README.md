@@ -37,6 +37,10 @@ npm run build
 
 Static assets are output to `dist/`. Serve with any static file server.
 
+## Credits
+
+Powered by [DuckDB-WASM](https://duckdb.org/docs/api/wasm/overview) — an in-process SQL OLAP database compiled to WebAssembly, enabling full SQL queries directly in the browser without any server.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

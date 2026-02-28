@@ -1,5 +1,5 @@
 import { keyframes } from "@emotion/react";
-import { Box, Chip, useTheme } from "@mui/material";
+import { Box, Chip } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 
 const liveDot = keyframes`
@@ -8,9 +8,6 @@ const liveDot = keyframes`
 `;
 
 export default function LocalOnlyBadge() {
-  const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
-
   return (
     <Chip
       icon={
@@ -23,7 +20,6 @@ export default function LocalOnlyBadge() {
               bgcolor: "success.main",
               animation: `${liveDot} 2s ease-in-out infinite`,
               flexShrink: 0,
-              boxShadow: isDark ? "0 0 6px #39ff14" : "none",
             }}
           />
           <LockIcon sx={{ fontSize: 14 }} />

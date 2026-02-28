@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { keyframes } from "@emotion/react";
-import { Paper, Typography, Button, useTheme } from "@mui/material";
+import { Paper, Typography, Button } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const float = keyframes`
@@ -16,8 +16,6 @@ interface Props {
 export default function FileDropzone({ onFile, disabled }: Props) {
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -56,17 +54,8 @@ export default function FileDropzone({ onFile, disabled }: Props) {
         cursor: disabled ? "default" : "pointer",
         borderStyle: "dashed",
         borderWidth: 2,
-        borderColor: dragOver
-          ? "primary.main"
-          : isDark
-          ? "rgba(57,255,20,0.25)"
-          : "divider",
-        bgcolor: dragOver
-          ? isDark
-            ? "rgba(57,255,20,0.05)"
-            : "action.hover"
-          : "transparent",
-        boxShadow: dragOver && isDark ? "0 0 24px rgba(57,255,20,0.15)" : "none",
+        borderColor: dragOver ? "primary.main" : "divider",
+        bgcolor: dragOver ? "action.hover" : "transparent",
         transition: "all 0.25s ease",
         opacity: disabled ? 0.5 : 1,
         userSelect: "none",
