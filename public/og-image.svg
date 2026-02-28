@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#121212"/>
+
+  <!-- Subtle grid lines -->
+  <line x1="0" y1="210" x2="1200" y2="210" stroke="#1e1e1e" stroke-width="1"/>
+  <line x1="0" y1="420" x2="1200" y2="420" stroke="#1e1e1e" stroke-width="1"/>
+  <line x1="400" y1="0" x2="400" y2="630" stroke="#1e1e1e" stroke-width="1"/>
+  <line x1="800" y1="0" x2="800" y2="630" stroke="#1e1e1e" stroke-width="1"/>
+
+  <!-- Logo icon (table rows) -->
+  <g transform="translate(96, 215)">
+    <rect x="0" y="0" width="200" height="46" rx="8" fill="#d4fa00"/>
+    <rect x="0" y="58" width="200" height="36" rx="6" fill="#d4fa00" opacity="0.5"/>
+    <rect x="0" y="106" width="200" height="36" rx="6" fill="#d4fa00" opacity="0.25"/>
+    <rect x="80" y="0" width="10" height="142" rx="5" fill="#121212" opacity="0.5"/>
+  </g>
+
+  <!-- App name -->
+  <text
+    x="340"
+    y="290"
+    font-family="'DM Sans', 'Helvetica Neue', Arial, sans-serif"
+    font-size="80"
+    font-weight="600"
+    fill="#ffffff"
+    letter-spacing="-1"
+  >Parquet</text>
+  <text
+    x="340"
+    y="375"
+    font-family="'DM Sans', 'Helvetica Neue', Arial, sans-serif"
+    font-size="80"
+    font-weight="600"
+    fill="#d4fa00"
+    letter-spacing="-1"
+  >Visualizer</text>
+
+  <!-- Tagline -->
+  <text
+    x="340"
+    y="435"
+    font-family="'DM Sans', 'Helvetica Neue', Arial, sans-serif"
+    font-size="28"
+    font-weight="400"
+    fill="#a0a0a0"
+  >Open · Query · Export — 100% in your browser</text>
+
+  <!-- Bottom badge -->
+  <rect x="340" y="480" width="230" height="42" rx="21" fill="#1e1e1e"/>
+  <text
+    x="455"
+    y="507"
+    font-family="'DM Sans', 'Helvetica Neue', Arial, sans-serif"
+    font-size="20"
+    font-weight="500"
+    fill="#d4fa00"
+    text-anchor="middle"
+  >Powered by DuckDB</text>
+</svg>

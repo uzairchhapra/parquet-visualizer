@@ -1,6 +1,6 @@
 import { createTheme, type PaletteMode } from "@mui/material";
 
-const NEON_GREEN = "#39ff14";
+const ACID_YELLOW = "#d4fa00";
 
 export function buildTheme(mode: PaletteMode) {
   return createTheme({
@@ -8,7 +8,7 @@ export function buildTheme(mode: PaletteMode) {
       mode,
       ...(mode === "dark"
         ? {
-            primary: { main: NEON_GREEN },
+            primary: { main: ACID_YELLOW },
             secondary: { main: "#00e5ff" },
             background: {
               default: "#121212",
@@ -20,16 +20,16 @@ export function buildTheme(mode: PaletteMode) {
             },
           }
         : {
-            primary: { main: "#4a7c59" },
-            secondary: { main: "#5c6bc0" },
+            primary: { main: "#5b8fc9" },
+            secondary: { main: "#7c6bc0" },
             background: {
-              default: "#f5f5f5",
+              default: "#f0f4fa",
               paper: "#ffffff",
             },
           }),
     },
     typography: {
-      fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
+      fontFamily: '"DM Sans", "Helvetica", "Arial", sans-serif',
       h6: { fontWeight: 600 },
       body2: { fontSize: "0.875rem" },
       caption: { fontSize: "0.75rem" },
