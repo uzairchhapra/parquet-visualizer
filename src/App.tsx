@@ -10,18 +10,21 @@ import {
   Tab,
   Chip,
   Tooltip,
+  Link,
 } from "@mui/material";
 import type { PaletteMode } from "@mui/material";
 import StorageIcon from "@mui/icons-material/Storage";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import StarIcon from "@mui/icons-material/Star";
 import { buildTheme } from "./theme";
 import { loadThemeMode, saveThemeMode } from "./lib/storage";
 import { DuckDBClient } from "./lib/duckdbClient";
 import type { ColumnInfo, ColumnProfile } from "./lib/workerTypes";
 import LocalOnlyBadge from "./components/LocalOnlyBadge";
 import ThemeToggle from "./components/ThemeToggle";
-import FileDropzone from "./components/FileDropzone";
+import LandingPage from "./components/LandingPage";
 import PreviewTab from "./components/PreviewTab";
 import SchemaTab from "./components/SchemaTab";
 import ProfileTab from "./components/ProfileTab";
@@ -32,6 +35,44 @@ function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function AppFooter() {
+  return (
+    <Box
+      component="footer"
+      sx={{
+        borderTop: 1,
+        borderColor: "divider",
+        py: 0.75,
+        px: 2,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 0.5,
+        flexShrink: 0,
+      }}
+    >
+      <Typography variant="caption" color="text.disabled">
+        Made with
+      </Typography>
+      <FavoriteIcon sx={{ fontSize: 10, color: "error.main" }} />
+      <Typography variant="caption" color="text.disabled">
+        by Uzair Chhapra ·
+      </Typography>
+      <Link
+        href="https://github.com/uzairchhapra/parquet-visualizer"
+        target="_blank"
+        rel="noopener noreferrer"
+        sx={{ display: "inline-flex", alignItems: "center", gap: 0.3 }}
+        color="text.disabled"
+        underline="hover"
+      >
+        <StarIcon sx={{ fontSize: 11 }} />
+        <Typography variant="caption">Star on GitHub</Typography>
+      </Link>
+    </Box>
+  );
 }
 
 export default function App() {
@@ -46,26 +87,19 @@ export default function App() {
 
   const [tab, setTab] = useState(0);
 
-  // Preview state
   const [previewCols, setPreviewCols] = useState<string[]>([]);
   const [previewRows, setPreviewRows] = useState<Record<string, unknown>[]>([]);
   const [previewRowCount, setPreviewRowCount] = useState(0);
   const [previewLoading, setPreviewLoading] = useState(false);
 
-  // Schema state
   const [schema, setSchema] = useState<ColumnInfo[]>([]);
   const [schemaLoading, setSchemaLoading] = useState(false);
 
-  // Profile state
   const [profileCols, setProfileCols] = useState<ColumnProfile[]>([]);
   const [profileRowCount, setProfileRowCount] = useState<number | null>(null);
-  const [profileProgress, setProfileProgress] = useState<{
-    done: number;
-    total: number;
-  } | null>(null);
+  const [profileProgress, setProfileProgress] = useState<{ done: number; total: number } | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
 
-  // Initialize DuckDB
   useEffect(() => {
     const client = new DuckDBClient();
     clientRef.current = client;
@@ -146,7 +180,6 @@ export default function App() {
         const buffer = await f.arrayBuffer();
         await client.loadParquet(buffer, f.name, f.size);
         setFile({ name: f.name, size: f.size });
-        // Auto-run preview and schema
         await Promise.all([runPreview(), runSchema()]);
         setTab(0);
       } catch (err) {
@@ -170,16 +203,12 @@ export default function App() {
     setTab(0);
   }, []);
 
-  const handleQuery = useCallback(
-    async (sql: string) => {
-      const client = clientRef.current;
-      if (!client) throw new Error("DuckDB not ready");
-      return client.query(sql);
-    },
-    []
-  );
+  const handleQuery = useCallback(async (sql: string) => {
+    const client = clientRef.current;
+    if (!client) throw new Error("DuckDB not ready");
+    return client.query(sql);
+  }, []);
 
-  // Auto-run profile when Profile tab is selected and no profile data exists
   const handleTabChange = useCallback(
     (_: React.SyntheticEvent, newTab: number) => {
       setTab(newTab);
@@ -201,7 +230,7 @@ export default function App() {
         >
           <Toolbar variant="dense">
             <StorageIcon sx={{ mr: 1, color: "primary.main" }} />
-            <Typography variant="h6" noWrap sx={{ mr: 2 }}>
+            <Typography variant="h6" fontWeight={700} noWrap sx={{ mr: 2 }}>
               Parquet Visualizer
             </Typography>
             {file && (
@@ -212,7 +241,7 @@ export default function App() {
                 variant="outlined"
                 onDelete={handleReset}
                 deleteIcon={
-                  <Tooltip title="Reset">
+                  <Tooltip title="Load a different file">
                     <RestartAltIcon />
                   </Tooltip>
                 }
@@ -228,46 +257,11 @@ export default function App() {
         </AppBar>
 
         {!file ? (
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              p: 4,
-            }}
-          >
-            <Box sx={{ maxWidth: 480, width: "100%" }}>
-              <Typography
-                variant="h5"
-                textAlign="center"
-                sx={{ mb: 1, fontWeight: 500 }}
-              >
-                Explore Parquet files locally
-              </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                textAlign="center"
-                sx={{ mb: 3 }}
-              >
-                All processing happens in your browser. No data leaves your
-                device.
-              </Typography>
-              <FileDropzone onFile={handleFile} disabled={loading || !dbReady} />
-              {!dbReady && (
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  textAlign="center"
-                  sx={{ mt: 2, display: "block" }}
-                >
-                  Initializing DuckDB engine...
-                </Typography>
-              )}
-            </Box>
-          </Box>
+          <LandingPage
+            onFile={handleFile}
+            disabled={loading || !dbReady}
+            dbReady={dbReady}
+          />
         ) : (
           <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -288,9 +282,7 @@ export default function App() {
                   loading={previewLoading}
                 />
               )}
-              {tab === 1 && (
-                <SchemaTab columns={schema} loading={schemaLoading} />
-              )}
+              {tab === 1 && <SchemaTab columns={schema} loading={schemaLoading} />}
               {tab === 2 && (
                 <ProfileTab
                   rowCount={profileRowCount}
@@ -300,13 +292,11 @@ export default function App() {
                 />
               )}
               {tab === 3 && (
-                <QueryTab
-                  onQuery={handleQuery}
-                  fileLoaded={!!file}
-                  schema={schema}
-                />
+                <QueryTab onQuery={handleQuery} fileLoaded={!!file} schema={schema} />
               )}
             </Box>
+
+            <AppFooter />
           </Box>
         )}
       </Box>

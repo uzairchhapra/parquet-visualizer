@@ -1,6 +1,12 @@
 import { useState, useCallback, useRef } from "react";
-import { Paper, Typography, Button, Box } from "@mui/material";
+import { keyframes } from "@emotion/react";
+import { Paper, Typography, Button } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
+const float = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+`;
 
 interface Props {
   onFile: (file: File) => void;
@@ -28,8 +34,7 @@ export default function FileDropzone({ onFile, disabled }: Props) {
   }, []);
 
   const handleDragLeave = useCallback(() => setDragOver(false), []);
-
-  const handleClick = () => inputRef.current?.click();
+  const handleClick = () => !disabled && inputRef.current?.click();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -42,18 +47,19 @@ export default function FileDropzone({ onFile, disabled }: Props) {
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
+      onClick={handleClick}
       sx={{
-        p: 3,
+        p: 5,
         textAlign: "center",
         cursor: disabled ? "default" : "pointer",
         borderStyle: "dashed",
         borderWidth: 2,
         borderColor: dragOver ? "primary.main" : "divider",
         bgcolor: dragOver ? "action.hover" : "transparent",
-        transition: "all 0.2s",
+        transition: "all 0.25s ease",
         opacity: disabled ? 0.5 : 1,
+        userSelect: "none",
       }}
-      onClick={handleClick}
     >
       <input
         ref={inputRef}
@@ -63,15 +69,24 @@ export default function FileDropzone({ onFile, disabled }: Props) {
         onChange={handleChange}
         disabled={disabled}
       />
-      <CloudUploadIcon sx={{ fontSize: 40, color: "text.secondary", mb: 1 }} />
-      <Typography variant="body2" color="text.secondary">
-        Drag & drop a .parquet file
+      <CloudUploadIcon
+        sx={{
+          fontSize: 52,
+          color: dragOver ? "primary.main" : "text.secondary",
+          mb: 1.5,
+          transition: "color 0.2s",
+          animation: !disabled && !dragOver ? `${float} 3s ease-in-out infinite` : "none",
+        }}
+      />
+      <Typography variant="body1" fontWeight={500} gutterBottom>
+        Drop your .parquet file here
       </Typography>
-      <Box sx={{ mt: 1 }}>
-        <Button size="small" variant="outlined" disabled={disabled}>
-          Browse
-        </Button>
-      </Box>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        or click to browse
+      </Typography>
+      <Button size="small" variant="outlined" color="primary" disabled={disabled} tabIndex={-1}>
+        Browse file
+      </Button>
     </Paper>
   );
 }
