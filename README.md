@@ -1,5 +1,13 @@
 # Parquet Visualizer
 
+[![CI](https://github.com/uzairchhapra/parquet-visualizer/actions/workflows/ci.yml/badge.svg)](https://github.com/uzairchhapra/parquet-visualizer/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/uzairchhapra/parquet-visualizer)](https://github.com/uzairchhapra/parquet-visualizer/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Node >=24](https://img.shields.io/badge/node-%3E%3D24-brightgreen)](package.json)
+[![Powered by DuckDB](https://img.shields.io/badge/powered%20by-DuckDB%20WASM-f0c40f?logo=duckdb&logoColor=black)](https://duckdb.org/docs/api/wasm/overview)
+[![100% client-side](https://img.shields.io/badge/privacy-100%25%20client--side-blue)](#privacy)
+[![Live Demo](https://img.shields.io/badge/demo-parquet.chhapra.cloud-d4fa00?labelColor=121212)](https://parquet.chhapra.cloud)
+
 A privacy-first, 100% client-side Parquet file explorer powered by DuckDB-WASM. No backend, no uploads, no telemetry.
 
 **[parquet.chhapra.cloud](https://parquet.chhapra.cloud)** — live demo, no install needed.

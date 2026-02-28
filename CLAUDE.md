@@ -130,3 +130,38 @@ Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
 - Material UI (MUI) for all components and theming
 - DuckDB-WASM in a Web Worker for query execution
 - No backend, no server-side processing
+
+## E2E Tests — mandatory for all dev work
+
+E2E tests live in `tests/e2e/app.spec.ts` and use `tests/fixtures/weather.parquet` as the test fixture.
+
+**Before committing any UI change**, run the full suite locally:
+
+```bash
+nvm use 24
+npm run build          # tests run against the production build
+npx playwright test
+```
+
+### Rules
+
+- **Never break a passing test.** If your change causes a test to fail, fix the test or the code — do not skip or delete the test.
+- **Add a test for any new user-visible feature.** New tab, new button, new query behaviour → new test.
+- **Use selectors that reflect the user's perspective**: `getByRole`, `getByText`, column header names. Avoid fragile CSS class selectors unless MUI provides no stable alternative.
+- **Do not use `waitForTimeout`** for synchronization. Wait for a specific element state (`toBeVisible`, `toBeEnabled`) instead.
+- The file input becomes `enabled` only after DuckDB-WASM initializes — always wait for that before calling `setInputFiles`.
+
+### Selector reference
+
+| Thing to target | Selector |
+|---|---|
+| File input | `page.locator('input[type="file"][accept=".parquet"]')` |
+| Tab | `page.getByRole("tab", { name: "Preview" })` |
+| DataGrid row | `page.locator(".MuiDataGrid-row")` |
+| Column header | `page.getByRole("columnheader", { name: "ColName" })` |
+| SQL textarea | `page.locator("textarea").first()` |
+| Chip delete (reset) | `page.locator(".MuiChip-deleteIcon")` |
+
+### On failure in CI
+
+If E2E fails in GitHub Actions, download the `playwright-report` artifact from the failed run — it contains screenshots and traces for every failing test.
