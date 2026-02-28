@@ -3,18 +3,18 @@
 ## 1. Run Locally
 
 ```bash
-nvm use 20
+nvm use 24
 npm install
 npm run dev
 # Opens at http://localhost:5173
 ```
 
-Requires Node 20+ via [nvm](https://github.com/nvm-sh/nvm). If not installed: `nvm install 20`.
+Requires Node 24+ via [nvm](https://github.com/nvm-sh/nvm). If not installed: `nvm install 24`.
 
 ## 2. Build & Deploy as Static Assets
 
 ```bash
-nvm use 20
+nvm use 24
 npm run build
 # Output: dist/
 # Serve with any static server: npx serve dist, python3 -m http.server, nginx, caddy, etc.
@@ -24,11 +24,11 @@ The build output is a static SPA — just HTML, JS, CSS, and WASM files. No serv
 
 ## 3. Nixpacks Deployment
 
-The project includes a `nixpacks.toml` that pins Node 20 and builds to `dist/`.
+The project includes a `nixpacks.toml` that pins Node 24 and builds to `dist/`.
 
 ```toml
 [phases.setup]
-nixPkgs = ["nodejs_20"]
+nixPkgs = ["nodejs_24"]
 
 [phases.install]
 cmds = ["npm install"]
@@ -43,7 +43,7 @@ cmds = ["npm run build"]
 - **Is it a static site?**: ✅ **Yes** — check this box. Coolify will serve `dist/` via its built-in nginx. No start command is needed.
 - **Publish directory**: `dist`
 
-Nixpacks also reads the `.nvmrc` (set to `20`) and the `engines.node` field in `package.json` as additional signals.
+Nixpacks also reads the `.nvmrc` (set to `24`) and the `engines.node` field in `package.json` as additional signals.
 
 ## 4. VPS Deployment (Hostinger + Coolify + Caddy + Cloudflare)
 

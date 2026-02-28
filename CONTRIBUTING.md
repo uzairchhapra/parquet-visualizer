@@ -16,7 +16,7 @@ git clone https://github.com/<your-username>/parquet-visualizer.git
 cd parquet-visualizer
 
 # 2. Use the right Node version
-nvm use 20
+nvm use 24
 
 # 3. Install dependencies
 npm install
