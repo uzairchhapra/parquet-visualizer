@@ -7,5 +7,5 @@ cmds = ["npm install"]
 [phases.build]
 cmds = ["npm run build"]
 
-[start]
-cmd = "npx serve dist -l $PORT"
+# Static site: Coolify serves dist/ via nginx when "Is it a static site?" is checked.
+# No start command needed.

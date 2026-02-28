@@ -24,7 +24,7 @@ The build output is a static SPA — just HTML, JS, CSS, and WASM files. No serv
 
 ## 3. Nixpacks Deployment
 
-The project includes a `nixpacks.toml` that pins Node 20 and runs the built `dist/` via `serve`.
+The project includes a `nixpacks.toml` that pins Node 20 and builds to `dist/`.
 
 ```toml
 [phases.setup]
@@ -35,12 +35,15 @@ cmds = ["npm install"]
 
 [phases.build]
 cmds = ["npm run build"]
-
-[start]
-cmd = "npx serve dist -l $PORT"
 ```
 
-Nixpacks also reads the `.nvmrc` (set to `20`) and the `engines.node` field in `package.json` as additional signals. No further configuration is needed in Coolify when using nixpacks as the build provider.
+### Coolify settings
+
+- **Build Pack**: Nixpacks
+- **Is it a static site?**: ✅ **Yes** — check this box. Coolify will serve `dist/` via its built-in nginx. No start command is needed.
+- **Publish directory**: `dist`
+
+Nixpacks also reads the `.nvmrc` (set to `20`) and the `engines.node` field in `package.json` as additional signals.
 
 ## 4. VPS Deployment (Hostinger + Coolify + Caddy + Cloudflare)
 
