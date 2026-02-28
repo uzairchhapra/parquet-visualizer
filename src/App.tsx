@@ -280,6 +280,7 @@ export default function App() {
                   rows={previewRows}
                   rowCount={previewRowCount}
                   loading={previewLoading}
+                  filename={file?.name}
                 />
               )}
               {tab === 1 && <SchemaTab columns={schema} loading={schemaLoading} />}

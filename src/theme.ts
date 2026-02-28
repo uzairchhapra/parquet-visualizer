@@ -29,8 +29,10 @@ export function buildTheme(mode: PaletteMode) {
           }),
     },
     typography: {
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
       h6: { fontWeight: 600 },
+      body2: { fontSize: "0.875rem" },
+      caption: { fontSize: "0.75rem" },
     },
     components: {
       MuiCssBaseline: {
