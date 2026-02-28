@@ -21,7 +21,7 @@ All data is processed locally in your browser using DuckDB-WASM. No files, queri
 ## Quick Start
 
 ```bash
-nvm use 20
+nvm use 24
 npm install
 npm run dev
 ```
@@ -31,7 +31,7 @@ Open http://localhost:5173 in your browser.
 ## Build
 
 ```bash
-nvm use 20
+nvm use 24
 npm run build
 ```
 
