@@ -1,0 +1,72 @@
+name: Bug Report
+description: Something isn't working correctly
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill out the sections below.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug.
+      placeholder: When I drop a .parquet file, the preview tab shows...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: I expected the table to show...
+    validations:
+      required: true
+
+  - type: textarea
+    id: file_info
+    attributes:
+      label: Parquet file info (if applicable)
+      description: Schema, row count, how it was generated. Do NOT upload sensitive data.
+      placeholder: |
+        Generated with pandas, 3 columns (int64, float64, string), 10k rows.
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chrome / Chromium
+        - Firefox
+        - Safari
+        - Edge
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+      placeholder: macOS 15, Windows 11, Ubuntu 24.04...
+    validations:
+      required: true
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Browser console errors
+      description: Open DevTools (F12) → Console and paste any errors here.
+      render: shell
