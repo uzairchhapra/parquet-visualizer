@@ -3,6 +3,8 @@ import type { WorkerRequest, WorkerResponse, ColumnInfo, ColumnProfile } from ".
 
 let db: duckdb.AsyncDuckDB | null = null;
 let conn: duckdb.AsyncDuckDBConnection | null = null;
+let _fileSeq = 0;
+let _prevPath: string | null = null;
 
 function post(msg: WorkerResponse) {
   self.postMessage(msg);
@@ -22,10 +24,17 @@ async function initDuckDB() {
 async function loadParquet(buffer: ArrayBuffer) {
   if (!db || !conn) throw new Error("DuckDB not initialized");
   const bytes = new Uint8Array(buffer);
-  await db.registerFileBuffer("/data.parquet", bytes);
+  // Use a unique path each load — re-registering the same path throws in DuckDB WASM
+  const path = `/data_${++_fileSeq}.parquet`;
+  await db.registerFileBuffer(path, bytes);
   await conn.query(
-    "CREATE OR REPLACE VIEW data AS SELECT * FROM read_parquet('/data.parquet')"
+    `CREATE OR REPLACE VIEW data AS SELECT * FROM read_parquet('${path}')`
   );
+  // Drop the previous file buffer now that the view points to the new one
+  if (_prevPath) {
+    try { await db.dropFile(_prevPath); } catch (_) {}
+  }
+  _prevPath = path;
 }
 
 async function runQuery(sql: string) {
