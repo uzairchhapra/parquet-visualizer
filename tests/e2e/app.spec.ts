@@ -2,18 +2,17 @@ import { test, expect, type Page } from "@playwright/test";
 import { fileURLToPath } from "url";
 import path from "path";
 
-const FIXTURE = path.resolve(
-  fileURLToPath(import.meta.url),
-  "../../fixtures/weather.parquet"
-);
+const FIXTURE_DIR = path.resolve(fileURLToPath(import.meta.url), "../../fixtures");
 
-// Helper: wait for DuckDB to be ready, then upload the fixture file.
+const FIXTURE = path.join(FIXTURE_DIR, "weather.parquet");
+
+// Helper: wait for DuckDB to be ready, then upload the given fixture file.
 // DuckDB init is complete when the file input is no longer disabled.
-async function loadFile(page: Page) {
+async function loadFile(page: Page, fixturePath = FIXTURE) {
   const input = page.locator('input[type="file"][accept=".parquet"]');
   // Wait for the input to become enabled (DuckDB initialized)
   await expect(input).toBeEnabled({ timeout: 30_000 });
-  await input.setInputFiles(FIXTURE);
+  await input.setInputFiles(fixturePath);
   // Wait for the tab bar to appear (file loaded successfully)
   await expect(page.getByRole("tab", { name: "Preview" })).toBeVisible({
     timeout: 30_000,
@@ -193,5 +192,74 @@ test.describe("query tab", () => {
     await expect(page.getByText(/1 row returned/i)).toBeVisible({
       timeout: 15_000,
     });
+  });
+});
+
+// ─────────────────────────────────────────────
+// 6. Compression support
+// ─────────────────────────────────────────────
+const COMPRESSIONS = ["brotli", "gzip", "lz4", "snappy", "uncompressed", "zstd"] as const;
+
+test.describe("compression support", () => {
+  for (const codec of COMPRESSIONS) {
+    test(`loads weather_${codec}.parquet`, async ({ page }) => {
+      const fixture = path.join(FIXTURE_DIR, `weather_${codec}.parquet`);
+      await page.goto("/");
+      await loadFile(page, fixture);
+      await expect(page.getByText(/\d+ of \d+ rows/i)).toBeVisible();
+      await expect(
+        page.getByRole("columnheader", { name: "MinTemp" })
+      ).toBeVisible();
+    });
+  }
+});
+
+// ─────────────────────────────────────────────
+// 7. File memory cleanup
+// ─────────────────────────────────────────────
+test.describe("file memory cleanup", () => {
+  test("old file buffer is dropped from DuckDB VFS after loading a new file", async ({ page }) => {
+    await page.goto("/");
+    // First load always registers at /data_1.parquet (seq starts at 0 per fresh worker)
+    await loadFile(page);
+
+    // Reset and load a second file — registers at /data_2.parquet
+    await page.locator(".MuiChip-deleteIcon").click();
+    await expect(page.getByText(/drop your .parquet file here/i)).toBeVisible();
+    await loadFile(page, path.join(FIXTURE_DIR, "weather_zstd.parquet"));
+
+    // Query the OLD path directly — should fail if the buffer was dropped
+    await page.getByRole("tab", { name: "Query" }).click();
+    const editor = page.locator("textarea").first();
+    await editor.fill("SELECT * FROM read_parquet('/data_1.parquet') LIMIT 1;");
+    await page.getByRole("button", { name: /run/i }).click();
+
+    // Wait for query completion — the history accordion appears after any query (success or error)
+    await expect(page.getByText(/query history/i)).toBeVisible({ timeout: 15_000 });
+
+    // If the old file was properly dropped: query fails, "rows returned" is never shown
+    // If the file is still registered: query succeeds and "rows returned" would be visible → test fails
+    await expect(page.getByText(/rows? returned/i)).not.toBeVisible();
+  });
+});
+
+// ─────────────────────────────────────────────
+// 8. File reload (reset + load new file)
+// ─────────────────────────────────────────────
+test.describe("file reload", () => {
+  test("loading a second file after reset shows new file data", async ({ page }) => {
+    await page.goto("/");
+    await loadFile(page);
+    await expect(page.getByText(/weather\.parquet/)).toBeVisible();
+
+    // Reset to landing page
+    await page.locator(".MuiChip-deleteIcon").click();
+    await expect(page.getByText(/drop your .parquet file here/i)).toBeVisible();
+
+    // Load a different compression variant
+    const fixture2 = path.join(FIXTURE_DIR, "weather_zstd.parquet");
+    await loadFile(page, fixture2);
+    await expect(page.getByText(/weather_zstd\.parquet/)).toBeVisible();
+    await expect(page.locator(".MuiDataGrid-row").first()).toBeVisible();
   });
 });
